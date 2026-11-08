@@ -1,0 +1,7 @@
+maxapi==1.2.4
+python-dotenv==1.2.4
+asyncpg==0.32.0
+tzdata==2026.6
+apscheduler==3.11.3
+faster-whisper==1.2.1
+av==18.1.0

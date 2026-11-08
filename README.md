@@ -10,6 +10,52 @@
 3. [Запуск на сервере с доменом](instructions/server.md) - полная настройка бота
 4. [Проверка работоспособности Алисы](instructions/alice.md)
 
+## Быстрый запуск
+
+Нужен Docker с Compose. Где взять токены — написано в [tokens.md](instructions/tokens.md)
+
+```bash
+git clone https://github.com/RebStep/UchebrickToMAX.git
+cd UchebrickToMAX
+cp .env.example .env
+```
+
+На Windows вместо `cp` пишем `copy .env.example .env`. В `.env` заполняем `MAX_BOT_TOKEN`, `GIGACHAT_CREDENTIALS`, `POSTGRES_PASSWORD` и `SESSION_SECRET`
+
+Собираем и запускаем контейнеры (база, бот, API, сайт и Caddy):
+
+```bash
+docker compose build
+docker compose up -d
+```
+
+Смотрим, что всё поднялось и бот запустился:
+
+```bash
+docker compose ps
+docker compose logs -f bot
+```
+
+Пример запуска: открываем бота в MAX, пишем `/start`, потом какое-нибудь задание, например `алгебра №24 к пятнице`. Бот ответит, что записал, а кнопка «🗺️ Карта» откроет карту с этим заданием. Сайт у себя на компе открывается на `http://localhost:8080`
+
+Остановить всё: `docker compose down`
+
+## Docker-образ и библиотеки
+
+Готовый образ бота собирается сам при каждом обновлении `main` и лежит в GitHub Packages:
+
+```bash
+docker pull ghcr.io/rebstep/uchebricktomax:latest
+```
+
+Бота из образа можно запустить и отдельно, если уже есть своя база PostgreSQL:
+
+```bash
+docker run -d --name uchebrik-bot --env-file .env -e DATABASE_URL=postgresql://uchebrik:пароль@адрес-базы:5432/uchebrik ghcr.io/rebstep/uchebricktomax:latest
+```
+
+Все библиотеки бота с версиями — в [requirements.txt](requirements.txt). Библиотеки сайта и API — в `miniapp/web/package.json` и `miniapp/api/package.json`.
+
 ## Что умеет
 
 - Задание можно написать, переслать или принять с чата, надиктовать в мини-приложении в окне создания нового дела. После чего задание разбирается и приходит пользователю на подтверждение, с функцией изменения определённых данных вручную 
