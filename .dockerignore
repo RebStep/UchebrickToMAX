@@ -1,0 +1,6 @@
+.git
+.env
+miniapp
+**/node_modules
+**/dist
+**/__pycache__
