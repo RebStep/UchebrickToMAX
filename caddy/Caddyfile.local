@@ -1,0 +1,14 @@
+:80 {
+	handle /api/* {
+		reverse_proxy api:3000
+	}
+	handle /ics/* {
+		reverse_proxy api:3000
+	}
+	handle /alice/* {
+		reverse_proxy api:3000
+	}
+	handle {
+		reverse_proxy web:80
+	}
+}

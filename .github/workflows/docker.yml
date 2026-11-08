@@ -1,0 +1,136 @@
+name: build-and-deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci
+        working-directory: miniapp/api
+      - run: npm test
+        working-directory: miniapp/api
+      - run: npm ci && npm run build
+        working-directory: miniapp/web
+      - run: npm test
+        working-directory: miniapp/web
+
+  image:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=latest
+            type=sha
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./bot
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20  # если сервер завис на сборке, не ждать часами
+    concurrency:
+      group: deploy-max
+      cancel-in-progress: false
+    env:
+      TARGET: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+    steps:
+      - name: Check deploy secrets
+        id: check
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          if [ -z "$SSH_HOST" ]; then
+            echo "::notice::SSH_HOST не задан, деплой пропущен"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.ok == 'true'
+
+      - name: SSH setup
+        if: steps.check.outputs.ok == 'true'
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          if [ -n "$SSH_KNOWN_HOSTS" ]; then
+            printf '%s\n' "$SSH_KNOWN_HOSTS" | awk -v h="$SSH_HOST" \
+              '!/^#/ { for (i = 1; i < NF; i++) if ($i ~ /^(ssh-|ecdsa-|sk-)/) { print h, $i, $(i+1); break } }' \
+              > ~/.ssh/known_hosts
+            if [ ! -s ~/.ssh/known_hosts ]; then
+              echo "::error::В SSH_KNOWN_HOSTS нет ключа сервера (нужен вывод ssh-keyscan -t ed25519 <IP>)"
+              exit 1
+            fi
+          else
+            ssh-keyscan -t ed25519 "$SSH_HOST" > ~/.ssh/known_hosts 2>/dev/null
+          fi
+
+      - name: Copy project
+        if: steps.check.outputs.ok == 'true'
+        run: |
+          tar czf - --exclude=.git --exclude=node_modules --exclude=dist --exclude=for_delete/docs . \
+            | ssh "$TARGET" "tar xzf - -C /opt/uchebrick-max"
+
+      - name: Build and restart
+        if: steps.check.outputs.ok == 'true'
+        run: |
+          ssh "$TARGET" bash -s <<'SCRIPT'
+          set -euo pipefail
+          cd /opt/uchebrick-max
+          test -s .env || { echo "::error::нет /opt/uchebrick-max/.env, запустите for_delete/server-setup-max.sh"; exit 1; }
+          grep -q '^MAX_BOT_TOKEN=.' .env || { echo "::error::в .env не заполнен MAX_BOT_TOKEN"; exit 1; }
+          grep -q '^GIGACHAT_CREDENTIALS=.' .env || { echo "::error::в .env не заполнен GIGACHAT_CREDENTIALS"; exit 1; }
+          docker network inspect edge >/dev/null 2>&1 || docker network create edge
+          docker compose -f docker-compose.yml -f for_delete/docker-compose.shared-proxy.yml up --build -d --remove-orphans
+          docker image prune -f >/dev/null
+          docker compose ps
+          SCRIPT
+
+      - name: Smoke test
+        if: steps.check.outputs.ok == 'true'
+        run: |
+          ssh "$TARGET" bash -s <<'SCRIPT'
+          set -euo pipefail
+          cd /opt/uchebrick-max
+          for i in $(seq 1 20); do
+            if docker compose exec -T api wget -qO- http://127.0.0.1:3000/api/health 2>/dev/null | grep -q '"ok":true'; then
+              echo "API и база отвечают"; break
+            fi
+            [ "$i" = 20 ] && { echo "::error::API не ответил за 60 секунд"; docker compose logs --tail 40 api bot; exit 1; }
+            sleep 3
+          done
+          docker compose logs --tail 15 bot
+          SCRIPT

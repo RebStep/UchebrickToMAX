@@ -1,0 +1,4 @@
+# скрипты и конфиги для сервера — всегда с переводом строки LF, даже если репозиторий склонирован на Windows
+*.sh text eol=lf
+Caddyfile* text eol=lf
+*.yml text eol=lf

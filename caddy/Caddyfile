@@ -1,0 +1,18 @@
+# Боевой режим (docker compose --profile prod up). Caddy сам получает сертификат Let's Encrypt для {$DOMAIN}.
+{$DOMAIN} {
+	handle /webhook {
+		reverse_proxy bot:8080
+	}
+	handle /api/* {
+		reverse_proxy api:3000
+	}
+	handle /ics/* {
+		reverse_proxy api:3000
+	}
+	handle /alice/* {
+		reverse_proxy api:3000
+	}
+	handle {
+		reverse_proxy web:80
+	}
+}

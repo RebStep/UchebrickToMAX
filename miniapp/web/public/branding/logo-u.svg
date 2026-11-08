@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 22 22" fill="none" role="img" aria-labelledby="title">
+  <title id="title">Учебрик — исходный логотип с буквой У</title>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4FA3FF"/>
+      <stop offset=".55" stop-color="#4F6BFF"/>
+      <stop offset="1" stop-color="#7A4DFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="22" height="22" rx="6.53125" fill="url(#background)"/>
+  <svg x="6" y="5" width="10.2" height="12.1" viewBox="0 0 12.6502 14.5753" preserveAspectRatio="none" overflow="visible">
+    <path d="M1.2375 4.12517L5.9125 8.93767M11.4125 1.23767L3.85 13.3377" stroke="white" stroke-width="2.475" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</svg>

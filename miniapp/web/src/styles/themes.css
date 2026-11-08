@@ -1,0 +1,188 @@
+:root[data-palette] {
+    --screen: #101415;
+    --board: #171d1f;
+    --card: #23292c;
+    --card-line: #343d41;
+    --bar: #22292b;
+    --bar-line: #3b4649;
+    --chip: #2b3538;
+    --ink: #f4f7f8;
+    --soft: #abb8bd;
+    --thread: #596e76;
+    --dot: rgba(184, 204, 211, 0.16);
+    --grid-line: rgba(184, 204, 211, 0.06);
+    --note-bg: #262d2b;
+    --note-line: #3b4843;
+    --ico-bg: #304650;
+    --img-bg: #29363b;
+    --side-bg: rgba(20, 27, 29, 0.88);
+    --canvas-glow: none;
+    --glass-background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), transparent), rgba(31, 40, 43, 0.76);
+}
+:root[data-palette="cosmos"] {
+    --screen: #101015;
+    --board: #1b1a21;
+    --card: #292831;
+    --card-line: #3c3948;
+    --bar: #26242d;
+    --chip: #34313e;
+    --soft: #b5afc6;
+    --accent: #a69bff;
+    --light-accent: #6250b5;
+    --tint: #7861b8;
+    --action-fill: linear-gradient(110deg, #6156c9, #8745a6);
+    --glass-selected: linear-gradient(115deg, rgba(101, 102, 217, 0.35), rgba(139, 76, 177, 0.28));
+    --glass-background: linear-gradient(145deg, rgba(164, 146, 236, 0.1), transparent), rgba(34, 31, 43, 0.78);
+    --side-bg: rgba(26, 24, 33, 0.88);
+    --note-bg: #2c2938;
+    --note-line: #474052;
+    --ico-bg: #3b3655;
+}
+:root[data-palette="confident"] {
+    --accent: #6fc2cd;
+    --light-accent: #277582;
+    --tint: #40949e;
+    --action-fill: linear-gradient(110deg, #337f90, #307d81);
+    --glass-selected: linear-gradient(115deg, rgba(77, 155, 172, 0.32), rgba(56, 143, 148, 0.27));
+}
+:root[data-palette="elegant"] {
+    --screen: #171317;
+    --board: #211b22;
+    --card: #2e252f;
+    --card-line: #443348;
+    --bar: #2b232d;
+    --chip: #392b39;
+    --soft: #c5aebf;
+    --accent: #ef9ab7;
+    --light-accent: #ab3e70;
+    --tint: #c15386;
+    --action-fill: linear-gradient(110deg, #b13d78, #be5054);
+    --glass-selected: linear-gradient(115deg, rgba(186, 70, 127, 0.33), rgba(221, 100, 100, 0.25));
+    --glass-background: linear-gradient(145deg, rgba(237, 147, 189, 0.1), transparent), rgba(45, 31, 44, 0.78);
+    --side-bg: rgba(32, 23, 32, 0.88);
+    --note-bg: #342a31;
+    --note-line: #53404c;
+    --ico-bg: #503349;
+}
+:root[data-palette="forest"] {
+    --screen: #10150f;
+    --board: #19211a;
+    --card: #222e27;
+    --card-line: #34473a;
+    --bar: #232c24;
+    --chip: #2c392e;
+    --soft: #acbfae;
+    --accent: #7dcd8f;
+    --light-accent: #28713d;
+    --tint: #35804b;
+    --action-fill: linear-gradient(110deg, #185339, #236742);
+    --glass-selected: linear-gradient(115deg, rgba(23, 79, 54, 0.6), rgba(32, 101, 63, 0.42));
+    --glass-background: linear-gradient(145deg, rgba(149, 208, 148, 0.08), transparent), rgba(29, 42, 32, 0.78);
+    --side-bg: rgba(23, 32, 24, 0.88);
+    --note-bg: #2b3328;
+    --note-line: #46503c;
+    --ico-bg: #314e3c;
+}
+:root[data-palette="neon"] {
+    --screen: #111015;
+    --board: #1c1a23;
+    --card: #2d2b35;
+    --card-line: #40394c;
+    --bar: #28252f;
+    --chip: #35303e;
+    --soft: #bcb1ca;
+    --accent: #b09aff;
+    --light-accent: #6a3cbe;
+    --tint: #824db6;
+    --action-fill: linear-gradient(110deg, #543bdc, #9b2fb4 58%, #b74c48);
+    --glass-selected: linear-gradient(
+        110deg,
+        rgba(84, 59, 220, 0.38),
+        rgba(164, 45, 189, 0.3),
+        rgba(220, 104, 96, 0.22)
+    );
+    --glass-background: linear-gradient(145deg, rgba(176, 134, 222, 0.1), transparent), rgba(38, 31, 46, 0.78);
+    --side-bg: rgba(28, 23, 35, 0.88);
+    --note-bg: #302a36;
+    --note-line: #4a3e53;
+    --ico-bg: #413451;
+}
+:root[data-palette="lavender"] {
+    --screen: #171122;
+    --board: #21182e;
+    --card: #30243e;
+    --card-line: #493859;
+    --bar: #2a2038;
+    --chip: #3b2b4d;
+    --soft: #bba9cd;
+    --accent: #c6a7fa;
+    --light-accent: #602cc1;
+    --tint: #9764ce;
+    --action-fill: linear-gradient(115deg, #7c20d9, #471aff);
+    --glass-selected: linear-gradient(120deg, rgba(149, 0, 255, 0.22), rgba(0, 191, 255, 0.16));
+    --glass-background: linear-gradient(145deg, rgba(195, 155, 248, 0.12), transparent), rgba(39, 27, 53, 0.75);
+    --side-bg: rgba(30, 20, 42, 0.85);
+    --note-bg: #362d3c;
+    --note-line: #574461;
+    --ico-bg: #49365e;
+    --canvas-glow:
+        radial-gradient(ellipse at 0% 100%, rgba(166, 103, 255, 0.22), transparent 67%),
+        radial-gradient(ellipse at 100% 100%, rgba(0, 191, 255, 0.16), transparent 67%);
+}
+:root[data-theme="light"][data-palette] {
+    --screen: color-mix(in srgb, var(--tint) 5%, #fff);
+    --board: #fff;
+    --card: rgba(255, 255, 255, 0.94);
+    --card-line: color-mix(in srgb, var(--tint) 22%, #e4e7e9);
+    --bar: #fff;
+    --bar-line: color-mix(in srgb, var(--tint) 25%, #e0e4e7);
+    --chip: color-mix(in srgb, var(--tint) 12%, #f4f5f7);
+    --ink: #20252c;
+    --soft: #616872;
+    --accent: var(--light-accent);
+    --thread: #a0adb6;
+    --dot: rgba(48, 63, 77, 0.15);
+    --grid-line: rgba(48, 63, 77, 0.06);
+    --note-bg: color-mix(in srgb, var(--tint) 7%, #fff);
+    --note-line: color-mix(in srgb, var(--tint) 22%, #e4e7e9);
+    --ico-bg: color-mix(in srgb, var(--tint) 16%, #f2f5f7);
+    --img-bg: #e9eaf0;
+    --side-bg: rgba(255, 255, 255, 0.85);
+    --glass-background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.18)), rgba(249, 250, 252, 0.72);
+    --glass-selected: linear-gradient(
+        115deg,
+        color-mix(in srgb, var(--tint) 22%, transparent),
+        color-mix(in srgb, var(--tint) 10%, transparent)
+    );
+}
+:root[data-theme="light"][data-palette="lavender"] {
+    --screen: #f4f0ff;
+    --board: #fdfbff;
+    --card-line: #dcd0ee;
+    --ink: #25183b;
+    --soft: #6b597f;
+    --note-bg: #fff8e9;
+    --note-line: #e8dcc3;
+    --canvas-glow:
+        radial-gradient(ellipse at 0% 100%, rgba(166, 103, 255, 0.35), transparent 67%),
+        radial-gradient(ellipse at 100% 100%, rgba(0, 191, 255, 0.28), transparent 67%);
+}
+:root[data-palette] .viewport::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--canvas-glow);
+    pointer-events: none;
+}
+:root[data-palette] :is(.set, .cal, .oly) {
+    background: var(--canvas-glow), var(--screen);
+}
+:root[data-palette] button:is(.save, .plus, .copy, .back, .ok, .add),
+:root[data-palette] .seg button.on,
+:root[data-palette] .kinds button.on,
+:root[data-palette] .chip.on,
+:root[data-palette] .pill.today {
+    background: var(--action-fill);
+    color: #fff;
+}

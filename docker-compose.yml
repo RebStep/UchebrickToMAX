@@ -1,0 +1,97 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: uchebrik
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?задайте POSTGRES_PASSWORD в .env}
+      POSTGRES_DB: uchebrik
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uchebrik -d uchebrik"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  bot:
+    build:
+      context: ./bot
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://uchebrik:${POSTGRES_PASSWORD}@db:5432/uchebrik
+      GIGACHAT_CREDENTIALS: ${GIGACHAT_CREDENTIALS:?задайте GIGACHAT_CREDENTIALS в .env — без GigaChat бот не разбирает задания}
+    volumes:
+      - files:/data/files
+    # docker compose watch: правки кода копируются в контейнер и бот перезапускается сам
+    develop:
+      watch:
+        - { action: sync+restart, path: ./bot/bot_max, target: /app/bot_max }
+        - { action: sync+restart, path: ./bot/core, target: /app/core }
+        - { action: sync+restart, path: ./bot/schema.sql, target: /app/schema.sql }
+        - { action: rebuild, path: ./bot/requirements.txt }
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build: ./miniapp/api
+    restart: unless-stopped
+    develop:
+      watch:
+        - { action: sync+restart, path: ./miniapp/api/src, target: /app/src }
+        - { action: rebuild, path: ./miniapp/api/package.json }
+    environment:
+      DATABASE_URL: postgresql://uchebrik:${POSTGRES_PASSWORD}@db:5432/uchebrik
+      MAX_BOT_TOKEN: ${MAX_BOT_TOKEN:?задайте MAX_BOT_TOKEN в .env}
+      SESSION_SECRET: ${SESSION_SECRET:?задайте SESSION_SECRET в .env}
+      ALICE_SECRET: ${ALICE_SECRET:-}
+    volumes:
+      - files:/data/files
+    depends_on:
+      db:
+        condition: service_healthy
+      bot:
+        condition: service_started
+
+  web:
+    build: ./miniapp/web
+    develop:
+      watch:
+        - { action: rebuild, path: ./miniapp/web/src }
+        - { action: rebuild, path: ./miniapp/web/public }
+        - { action: rebuild, path: ./miniapp/web/index.html }
+    restart: unless-stopped
+
+  caddy-local:
+    image: caddy:2-alpine
+    profiles: ["local"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${LOCAL_PORT:-8080}:80"
+    volumes:
+      - ./caddy/Caddyfile.local:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - api
+      - web
+
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["prod"]
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on:
+      - bot
+
+volumes:
+  pgdata:
+  files:
+  caddy_data:
